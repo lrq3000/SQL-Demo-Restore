@@ -50,3 +50,8 @@ EXAMPLE
     print('<br />Last demo reset: '.$sqldemo->showLastDate());
     
 You can find this example and a few others inside the file examples.php
+
+ADDITIONAL NOTES
+----------------
+This software uses the nice PclZip library by Vincent Blavet. If you ever encounter problems, you can update the zip library very simply by downloading a new release from the website:
+http://www.phpconcept.net
