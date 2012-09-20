@@ -44,4 +44,16 @@ if ($sqldemo->dump(dirname(__FILE__).'/test2.sql')) {
 }
 */
 
+/* Example to restore files from a zip file
+// Include and load the class
+include_once(dirname(__FILE__).'/sqldemorestore.class.php');
+$sqldemo = new SQLDemoRestore(); // sql connection infos are optional
+
+if ($sqldemo->restoreFiles(dirname(__FILE__).'/../myfiles.zip', dirname(__FILE__).'/demofolder/', true)) {
+    print 'All done!';
+} else {
+    print 'Errors occured: <br />'.implode('<br />', $sqldemo->errors);
+}
+*/
+
 ?>

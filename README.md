@@ -4,7 +4,7 @@
 DESCRIPTION
 -----------
 
-SQL Demo Restore Class is a simple PHP5 (and maybe PHP4) class to automatically reset a demo web application, by restoring a sql dump file into the database and by restoring files from a zip file.
+SQL Demo Restore Class is a simple PHP >= 5.0 class to automatically reset a demo web application, by restoring a sql dump file into the database and by restoring files from a zip file.
 
 It provides:
 
@@ -24,6 +24,8 @@ This software uses the PclZip Library under the LGPLv2.1+
 
 EXAMPLE
 -------
+
+### SQL reset example:
  
     // Init mysql vars
     $mysql_host = "localhost:3306";
@@ -37,10 +39,10 @@ EXAMPLE
 
     // Automatically reset the database every 10 minutes
     $rtncode = $sqldemo->resetAuto(dirname(__FILE__).'/test.sql', 600);
-    if ($rtncode) { // stop printing the rest of the page if the database is being reset (a message and an automatic redirection will take place)
+    if ($rtncode) { // If the reset was successfully done, ...
         // Restore files from a zip archive
-        // $sqldemo->restoreFiles(dirname(__FILE__).'/../myfiles.zip', dirname(__FILE__).'/thisfolder/', true);
-        die();
+        // $sqldemo->restoreFiles(dirname(__FILE__).'/../myfiles.zip', dirname(__FILE__).'/demofolder/', true);
+        die(); // stop printing the rest of the page if the database is/was being reset (a message and an automatic redirection will take place)
     }
 
     // Print a form to manually reset the database, limited to one reset every 2 minutes
@@ -48,10 +50,21 @@ EXAMPLE
 
     // Print last reset date/time
     print('<br />Last demo reset: '.$sqldemo->showLastDate());
+
+### File restore example:
+    // Include and load the class
+    include_once(dirname(__FILE__).'/sqldemorestore.class.php');
+    $sqldemo = new SQLDemoRestore(); // sql connection infos are optional
+
+    if ($sqldemo->restoreFiles(dirname(__FILE__).'/../myfiles.zip', dirname(__FILE__).'/demofolder/', true)) {
+        print 'All done!';
+    } else {
+        print 'Errors occured: <br />'.implode('<br />', $sqldemo->errors);
+    }
     
-You can find this example and a few others inside the file examples.php
+You can find these examples and a few others inside the file examples.php
 
 ADDITIONAL NOTES
 ----------------
-This software uses the nice PclZip library by Vincent Blavet. If you ever encounter problems, you can update the zip library very simply by downloading a new release from the website:
+This software uses the nice PclZip library by Vincent Blavet. You can easily update the zip library very simply by downloading a new release from the website:
 http://www.phpconcept.net

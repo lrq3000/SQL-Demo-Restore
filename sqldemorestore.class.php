@@ -47,11 +47,15 @@ class SQLDemoRestore {
      */
     public function connect($mysql_host='localhost:3306', $mysql_username='root', $mysql_password='', $mysql_database='test') {
         // Connect to MySQL server
-        $conn = mysql_pconnect($mysql_host, $mysql_username, $mysql_password) or die('Error connecting to MySQL server: ' . mysql_error());
-        // Select database
-        mysql_select_db($mysql_database) or die('Error selecting MySQL database: ' . mysql_error());
+        $conn = mysql_pconnect($mysql_host, $mysql_username, $mysql_password) or $this->errors[] = 'Error connecting to MySQL server: ' . mysql_error();
+        if (is_resource($conn)) {
+            // Select database
+            mysql_select_db($mysql_database) or $this->errors[] = 'Error selecting MySQL database: ' . mysql_error();
 
-        return $conn;
+            return $conn;
+        } else {
+            return false;
+        }
     }
 
     /** Close a MySQL connection to database
@@ -529,7 +533,7 @@ class SQLDemoRestore {
     public function restoreFiles($zipfile, $path, $priordelete=false) {
         if (file_exists($path) and file_exists($zipfile)) {
             if ($priordelete) $this->rrmdir($path);
-            mkdir($path, 0755);
+            if (!file_exists($path)) mkdir($path, 0755); // recreate folder if it was deleted
             return $this->extractzip($zipfile, $path);
         } else {
             if (!file_exists($zipfile)) $this->errors[] = 'Zip file does not exist.';
