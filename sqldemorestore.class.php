@@ -29,6 +29,7 @@ class SQLDemoRestore {
     public $parameters = array();
     public $parameters_delimiter = ':';
     public $errors = array();
+    public $mysql_conn = null;
 
     public function __construct($mysql_host=null, $mysql_username=null, $mysql_password=null, $mysql_database=null, $parameters_filename=null) {
         if (isset($mysql_host)) $this->mysql_host = $mysql_host;
@@ -236,11 +237,13 @@ class SQLDemoRestore {
      *  @param  $redirection    null/string   redirection url for the automatic redirection and link (null for default: same page)
      *  @param  $redirectiontime    null/int    time delay for the automatic redirection in seconds (can also be null to disable automatic redirection)
      *
+     *  @return bool/null   null if nothing was done (only printing link), true if the reset was successful, false if problem
+     *
      */
     public function resetForm($filename, $interval=null, $linklabel='Reset the demo', $redirection=null, $redirectiontime=5) {
         if (!isset($_REQUEST['reset']) or $_REQUEST['reset'] != 'ok') {
             print('<a href="'.$_SERVER['PHP_SELF'].'?reset=ok">'.$linklabel.'</a>');
-            return true;
+            return null;
         } else {
             return $this->resetWithMessages($filename, $interval, $redirection, $redirectiontime);
         }
