@@ -37,9 +37,12 @@ class SQLDemoRestore {
         if (isset($mysql_password)) $this->mysql_password = $mysql_password;
         if (isset($mysql_database)) $this->mysql_database = $mysql_database;
         if (isset($parameters_filename)) $this->parameters_filename = $parameters_filename;
-        $this->errors = array();
 
-        $this->mysql_conn = $this->connect($this->mysql_host, $this->mysql_username, $this->mysql_password, $this->mysql_database);
+        if (isset($mysql_host) or isset($mysql_username) or isset($mysql_password) or isset($mysql_database)) { // only connect if at least one database parameter was supplied
+            $this->mysql_conn = $this->connect($this->mysql_host, $this->mysql_username, $this->mysql_password, $this->mysql_database);
+        }
+
+        return true;
     }
 
     /** Connect to a MySQL database
