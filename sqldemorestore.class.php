@@ -1,5 +1,5 @@
 ﻿<?php
-/* Copyright (C) 2012   Stephen Larroque <lrq3000@gmail.com>
+/* Copyright (C) 2012-2013   Stephen Larroque <lrq3000@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the Lesser GNU General Public License as published by
@@ -176,6 +176,8 @@ class SQLDemoRestore {
      *
      *  @param  $filename   string      filename for the sql file to be restored into database
      *  @param  $diff   int     seconds to wait before next reset is accepted
+     *
+     *  @return  int     0 if OK, 1 if KO
      */
     public function reset($filename, $diff=null) {
         $dflag = $this->isLastDateValid($diff);
@@ -184,6 +186,8 @@ class SQLDemoRestore {
             $this->setLastDate();
             $this->saveParametersFile();
             return $this->restore($filename);
+        } else {
+            return 1;
         }
     }
 
@@ -284,7 +288,7 @@ class SQLDemoRestore {
      *
      * @param   string  $filename   filename of the sql dump to restore in database
      *
-     * @return  int     0 if KO, 1 if OK
+     * @return  int     0 if OK, 1 if KO
      */
     public function restore($filename) {
 
@@ -337,7 +341,7 @@ class SQLDemoRestore {
 
         //mysql_close($conn);
 
-        if (empty($this->errors)) return 1; else return 0;
+        if (empty($this->errors)) return 0; else return 1;
     }
 
     /** MySQL Database Saving (dumping)
