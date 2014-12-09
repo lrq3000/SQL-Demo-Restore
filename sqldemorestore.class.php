@@ -224,7 +224,17 @@ class SQLDemoRestore {
             $rurl = $redirection;
         }
 
-        if (isset($redirectiontime)) header( 'refresh: '.$redirectiontime.'; url='.$rurl );
+        if (isset($redirectiontime)) {
+            if (!headers_sent()) { // use standard HTTP redirection if headers are not already sent (the sqldemorestore calling stnippet is above any other printing)
+                header( 'refresh: '.$redirectiontime.'; url='.$rurl );
+            } else { // else headers are already sent, use Javascript to redirect
+                print '<script type="text/javascript">
+                setTimeout(function () {
+                        window.location.href = "'.$rurl.'"; //will redirect to your blog page (an ex: blog.html)
+                }, '.($redirectiontime*1000).');
+                </script>';
+            }
+        }
         print 'Please wait while the database is being reset...';
         $this->flush(); // Force page refresh
         $rtncode = $this->reset($filename, $diff);
@@ -269,8 +279,10 @@ class SQLDemoRestore {
      *
      */
     public function resetAuto($filename, $interval=null, $redirection=null, $redirectiontime=5) {
-        if ($this->isLastDateValid($interval)) {
-            return $this->resetWithMessages($filename, $interval, $redirection, $redirectiontime);
+        if (!isset($_REQUEST['reset']) and $_REQUEST['reset'] !== 'ok') { // check that we didn't call for a manual reset on the same calling script
+            if ($this->isLastDateValid($interval)) {
+                return $this->resetWithMessages($filename, $interval, $redirection, $redirectiontime);
+            }
         }
     }
 
