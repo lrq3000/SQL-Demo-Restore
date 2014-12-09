@@ -86,14 +86,18 @@ class SQLDemoRestore {
             list($key, $value) = explode($this->parameters_delimiter,$line);
             $this->parameters[$key] = $value;
         }
-        return true;
+        if (empty($this->parameters)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /** Get database's reset last date/time (either from cache or from file)
      *
      *  @return     null/timestamp      last date timestamp or null if empty
      */
-    public function getLastDate() {
+    public function getLastDate($recursed=false) {
         // if lastDate is defined, we return it
         if (isset($this->parameters['lastDate'])) {
             return $this->parameters['lastDate'];
@@ -102,8 +106,8 @@ class SQLDemoRestore {
             return null;
         // else parameters is not defined and we read the file and retry
         } else {
-            if ($this->loadParametersFile()) {
-                return $this->getLastDate();
+            if (!$recursed and $this->loadParametersFile()) { // avoid infinite recursion by checking the recursed flag
+                return $this->getLastDate(true);
             } else { // file could not be found
                 return null; // return null
             }
@@ -275,7 +279,12 @@ class SQLDemoRestore {
      *  @param  string  $format     date() format to print the date/time (can be left null)
      */
     public function showLastDate($format="j F Y H:i (T)") {
-        return date($format, $this->getLastDate());
+        $last_date = $this->getLastDate();
+        if (!empty($last_date)) {
+            return date($format, $last_date);
+        } else {
+            return null;
+        }
     }
 
     /** Restore MySQL dump using PHP
